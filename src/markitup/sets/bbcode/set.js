@@ -11,6 +11,7 @@
 // ----------------------------------------------------------------------------
 mySettings = {
 	previewParserPath:	'', // path to your BBCode parser
+	previewInWindow: '',
 	markupSet: [
 		{name:'Bold', key:'B', openWith:'[b]', closeWith:'[/b]'},
 		{name:'Italic', key:'I', openWith:'[i]', closeWith:'[/i]'},

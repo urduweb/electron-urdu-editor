@@ -5,7 +5,7 @@ const {dialog} = require('electron')
 const fs= require('fs')
 
 const path = require('path')
-require('electron-debug')({showDevTools: true});
+//require('electron-debug')({showDevTools: true});
 
 const app = electron.app
 const BrowserWindow = electron.BrowserWindow
@@ -35,22 +35,49 @@ let template = [
     },
     {
       label: 'New',
-    },
-    {
-      label: 'Save',
-      accelerator: 'CmdOrCtrl+S',
+      accelerator: 'CmdOrCtrl+N',
       click: function () 
-              {  
-                  saveCurrentChanges();
-              }
-    }, 
+      {  
+        if(dirtyFlag)
+        {
+            // ask the user if first wants to save the current file
+            let index= dialog.showMessageBox({type:'question', buttons:['Yes', 'No'], title:'Unsaved changes..', message:'Do want to save changes?'})    
+            if (index==0) {
+              saveCurrentChanges()
+            }
+          }
+          newDocument()
+        }
+      },
+      {
+        label: 'Save',
+        accelerator: 'CmdOrCtrl+S',
+        click: function () 
+                {  
+                    saveCurrentChanges();
+                }
+      }, 
+      {
+        label: 'Save As',
+        accelerator: 'CmdOrCtrl+Shift+S',
+        click: function () {
+          saveCurrentChangesAs();
+        }
+      },
     {
       type: 'separator'
     }, {
       label: 'Quit',
       accelerator: 'Cmd+Q',
       click: function () { 
-        saveCurrentChanges();
+        if(dirtyFlag)
+        {
+          // ask the user if first wants to save the current file
+          let index= dialog.showMessageBox({type:'question', buttons:['Yes', 'No'], title:'Unsaved changes..', message:'Do want to save changes?'})    
+          if (index==0) {
+            saveCurrentChanges();
+        }
+  }
         app.quit() 
       }
     }]
@@ -70,8 +97,8 @@ let template = [
 
 app.on('ready', _ => {
   mainWindow = new BrowserWindow({
-    height: 400,
-    width: 400,
+    height: 800,
+    width: 800,
   })
 
   mainWindow.def
@@ -90,7 +117,14 @@ app.on('ready', _ => {
 })
 
 app.on('window-all-closed', () => {
-  saveCurrentChanges();
+  if(dirtyFlag)
+  {
+    // ask the user if first wants to save the current file
+    let index= dialog.showMessageBox({type:'question', buttons:['Yes', 'No'], title:'Unsaved changes..', message:'Do want to save changes?'})    
+    if (index==0) {
+      saveCurrentChanges();
+    }
+  }
   app.quit()
 })
 
@@ -100,7 +134,7 @@ ipc.on('gettext', (evt, str) => {
 
   if(!(currentFilePath == 'NewFile') )
   {
-    fs.writeFile(currentFilePath, str, 'utf8', (err) => {
+    fs.writeFile(currentFilePath, strContent, 'utf8', (err) => {
           if(err){
               console.log("An error ocurred creating the file "+ err.message)
           }
@@ -110,6 +144,7 @@ ipc.on('gettext', (evt, str) => {
   }
   else
   {
+    let filename
     dialog.showSaveDialog((fileName) => {
         if (fileName === undefined){
             console.log("You didn't save the file");
@@ -117,7 +152,7 @@ ipc.on('gettext', (evt, str) => {
         }
 
         // fileName is a string that contains the path and filename created in the save file dialog.  
-        fs.writeFile(fileName, str, (err) => {
+        fs.writeFile(fileName, strContent, (err) => {
             if(err){
                 console.log("An error ocurred creating the file "+ err.message)
             }                        
@@ -132,17 +167,46 @@ ipc.on('setDirty', (evt, str) => {
   strContent=str
 })
 
+newDocument  = function()
+{
+  strContent = ""
+  currentFilePath = 'NewFile'
+  mainWindow.setTitle(currentFilePath)
+  mainWindow.webContents.send('load', strContent)
+}
+
+
+saveCurrentChangesAs = function()
+{
+  let filename
+  dialog.showSaveDialog((fileName) => {
+      if (fileName === undefined){
+          console.log("You didn't save the file");
+          return;
+      }
+
+      // fileName is a string that contains the path and filename created in the save file dialog.  
+      fs.writeFile(fileName, strContent, (err) => {
+          if(err){
+              console.log("An error ocurred creating the file "+ err.message)
+          }                        
+          console.log("The file has been succesfully saved");
+      });
+  });
+}
+
+
 saveCurrentChanges = function()
 {
   // check if current file has been modified
-  if(dirtyFlag)
-  {
+  //if(dirtyFlag)
+  //{
     // ask the user if first wants to save the current file
-    let index= dialog.showMessageBox({type:'question', buttons:['Ok', 'Cancel'], title:'Unsaved changes..', message:'Do want to save changes?'})
-    if (index==0) {
+    //let index= dialog.showMessageBox({type:'question', buttons:['Yes', 'No'], title:'Unsaved changes..', message:'Do want to save changes?'})
+    //if (index==0) {
       if(!(currentFilePath == 'NewFile') )
         {
-            fs.writeFile(currentFilePath, str, 'utf8', (err) => {
+            fs.writeFile(currentFilePath, strContent, 'utf8', (err) => {
                 if(err){
                     console.log("An error ocurred creating the file "+ err.message)
                 }
@@ -152,6 +216,7 @@ saveCurrentChanges = function()
         }
         else
         {
+          let filename
             dialog.showSaveDialog((fileName) => {
                 if (fileName === undefined){
                     console.log("You didn't save the file");
@@ -159,22 +224,33 @@ saveCurrentChanges = function()
                 }
 
                 // fileName is a string that contains the path and filename created in the save file dialog.  
-                fs.writeFile(fileName, str, (err) => {
+                fs.writeFile(fileName, strContent, (err) => {
                     if(err){
                         console.log("An error ocurred creating the file "+ err.message)
                     }
-                                
-                    console.log("The file has been succesfully saved");
+                    else
+                    {
+                      let strFileName= path.basename(fileName)
+                      mainWindow.setTitle(strFileName);
+                      console.log("The file has been succesfully saved");
+                    }                                                  
                 });
             });
         }
-    }
-  }
+    //}
+  //}
 }
 
 loadFile = function()
 {
-  saveCurrentChanges();
+  if(dirtyFlag)
+  {
+    // ask the user if first wants to save the current file
+    let index= dialog.showMessageBox({type:'question', buttons:['Yes', 'No'], title:'Unsaved changes..', message:'Do want to save changes?'})    
+    if (index==0) {
+      saveCurrentChanges();
+    }
+  }
   var fileNames
   // read file from disk
   // send the contents to the renderer

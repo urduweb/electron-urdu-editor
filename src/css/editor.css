@@ -1,26 +1,15 @@
-* { padding: 0; margin: 0; }
-html, body, #container {
-    min-height: 100% !important;
-    height: 100%;
-}
-
-#container
-{
-    width:100%;
-}
 
 #contenteditor
 {
 	font-family: 'Jameel Noori Nastaleeq';
-    width:100%;
-    height:80%; 
 	font-size: 18pt;
-
+	line-height: 22pt;
 }
 
 .keyboardHeader {
-    background: none repeat scroll 0 0 #415888;
-    border: 1px outset #000000;
+    background: none repeat scroll 0 0 #3C769D;
+    border: 1px outset #3C769D;
+	border-radius: 3px;
     color: #FFFFFF;
     cursor: move;
     margin: 0 0 5px;
@@ -28,77 +17,88 @@ html, body, #container {
     text-align: center;
 }
 .keyboardContainer {
-    background: none repeat scroll 0 0 #F7F7F7;
-    border: 1px solid;
+    background: none repeat scroll 0 0 #FFFFFF;
+    border: 1px solid #3C769D;
+	border-radius: 5px;
     direction: ltr;
     padding: 5px;
     z-index: 100;
 }
 .keyboardContainerDragged {
-    background: none repeat scroll 0 0 #F7F7F7;
+    background: none repeat scroll 0 0 #FFFFFF;
     direction: ltr;
     opacity: 0.4;
     padding: 5px;
     z-index: 100;
 }
 .keyboardPanel {
-    background: none repeat scroll 0 0 #EFEFEF;
-    border: 1px solid;
+    background: none repeat scroll 0 0 #FFFFFF;
+    border: 1px solid #3C769D;
+	border-radius: 3px;
     color: #000000;
     direction: ltr;
     padding: 4px;
 }
 
+.kbdTable
+{
+	background-color: #FFFFFF;
+	border: 1px solid #3C769D;
+	direction: rtl;
+	width: 100%;
+}
+
 .btnHelp 
 {	
-	background: #ECECEC;
-	border: 1px solid #888888;
+	background: #FFFFFF;
+	border: 1px solid #3C769D;
+	border-radius: 3px;
 	cursor: pointer;
 	cursor: hand;
 	text-align:center;
-	font-family:Urdu Naskh Asiatype, Tahoma;
+	font-family:'Jameel Noori Nastaleeq', Tahoma;
 	font-size:14px;
 }
 
 .btnFlat 
 {	
-	background: #ECECEC;
-	border: 1px solid #888888;
+	background: #FFFFFF;
+	border: 1px solid #3C769D;
+	border-radius: 3px;
 	cursor: pointer;
 	cursor: hand;
 	text-align:center;
-	font-family: Urdu Naskh Asiatype, Tahoma;
+	font-family: 'Jameel Noori Nastaleeq', Tahoma;
 	font-size:14px;
 }
 
 .btnRaised, .btnFlat:hover {
-	background: #D3D3D3;
-	border: 1px outset;
+	background: #F5F5F5;
+	border: 1px outset #3C769;
 	cursor: pointer;
 	cursor: hand;
 	text-align:center;
-	font-family:Urdu Naskh Asiatype, Tahoma;
+	font-family:'Jameel Noori Nastaleeq', Tahoma;
 	font-size:14px;
-	font-weight:bold;
 }
 .btnLowered, .btnFlat:active {
 	background: #D3D3D3;
-	border: 1px inset;
+	border: 1px inset #3C769;
 	cursor: pointer;
 	cursor: hand;
 	text-align:center;
-	font-family: Urdu Naskh Asiatype, Tahoma;
+	font-family: 'Jameel Noori Nastaleeq', Tahoma;
 	font-size:14px;
 }
 
 .btnSysFlat 
 {	
 	background: #808080;
-	border: 1px solid #888888;
+	border: 1px solid #3C769D;
 	cursor: pointer;
 	cursor: hand;
 	text-align:center;
-	font-family:Urdu Naskh Asiatype, Tahoma;
+	font-family:'Jameel Noori Nastaleeq', Tahoma;
 	font-size:14px;
 }
 
@@ -108,17 +108,17 @@ html, body, #container {
 	cursor: pointer;
 	cursor: hand;
 	text-align:center;
-	font-family:Urdu Naskh Asiatype, Tahoma;
+	font-family:'Jameel Noori Nastaleeq', Tahoma;
 	font-size:14px;
-	font-weight:bold;
 }
+
 .btnSysLowered, .btnSysFlat:active {
 	background: #333333;
 	border: 1px inset;
 	cursor: pointer;
 	cursor: hand;
 	text-align:center;	
-	font-family:Urdu Naskh Asiatype, Tahoma;
+	font-family:'Jameel Noori Nastaleeq', Tahoma;
 	font-size:14px;
 }
 .hiddentext {display:none}

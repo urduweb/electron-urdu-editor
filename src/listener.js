@@ -20,3 +20,8 @@ document.getElementById('contenteditor').addEventListener('keypress', _ => {
     var strText=document.getElementById('contenteditor').value 
     ipc.send('setDirty')
 })
+
+document.getElementById('contenteditor').addEventListener('change', _ => {
+    var strText=document.getElementById('contenteditor').value 
+    ipc.send('setDirty')
+})
