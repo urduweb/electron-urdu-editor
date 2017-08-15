@@ -1,5 +1,5 @@
 const electron = require('electron')
-const {dialog} = require('electron')
+const {dialog, globalShortcut} = require('electron')
 //var remote = require('remote');
 //var dialog = remote.require('dialog');
 const fs= require('fs')
@@ -128,6 +128,10 @@ app.on('window-all-closed', () => {
   app.quit()
 })
 
+ipc.on('updateText', (evt, str) => {
+  strContent = str
+  console.log(str)
+})
 
 
 ipc.on('gettext', (evt, str) => {
@@ -162,6 +166,22 @@ ipc.on('gettext', (evt, str) => {
   }
 })
 
+
+
+ipc.on('handleCommand', (evt, cmd) => {
+  switch(cmd)
+  {
+    case "Save":
+      console.log("Saving...");
+      saveCurrentChanges();
+      break;
+    case "SaveAs":
+      console.log("Saving as...");
+      saveCurrentChangesAs();
+      break;
+  }
+})
+
 ipc.on('setDirty', (evt, str) => {
   dirtyFlag = true
   strContent=str
@@ -179,6 +199,7 @@ newDocument  = function()
 saveCurrentChangesAs = function()
 {
   let filename
+  mainWindow.webContents.send('update')
   dialog.showSaveDialog((fileName) => {
       if (fileName === undefined){
           console.log("You didn't save the file");
@@ -189,7 +210,8 @@ saveCurrentChangesAs = function()
       fs.writeFile(fileName, strContent, (err) => {
           if(err){
               console.log("An error ocurred creating the file "+ err.message)
-          }                        
+          }     
+          dirtyFlag = false                   
           console.log("The file has been succesfully saved");
       });
   });
@@ -204,13 +226,14 @@ saveCurrentChanges = function()
     // ask the user if first wants to save the current file
     //let index= dialog.showMessageBox({type:'question', buttons:['Yes', 'No'], title:'Unsaved changes..', message:'Do want to save changes?'})
     //if (index==0) {
+      mainWindow.webContents.send('update')
       if(!(currentFilePath == 'NewFile') )
         {
             fs.writeFile(currentFilePath, strContent, 'utf8', (err) => {
                 if(err){
                     console.log("An error ocurred creating the file "+ err.message)
                 }
-                            
+                dirtyFlag = false          
                 console.log("The file has been succesfully saved");
             });
         }
@@ -232,6 +255,7 @@ saveCurrentChanges = function()
                     {
                       let strFileName= path.basename(fileName)
                       mainWindow.setTitle(strFileName);
+                      dirtyFlag = false
                       console.log("The file has been succesfully saved");
                     }                                                  
                 });
@@ -271,10 +295,11 @@ loadFile = function()
           // Change how to handle the file content
           //console.log("The file content is : " + data);
           mainWindow.webContents.send('load', data)
+          let strFileName= path.basename(currentFilePath)
+          mainWindow.setTitle(strFileName);
+          strContent = data
           //mainWindow.webContents.set
-      });
-      let strFileName= path.basename(currentFilePath)
-      mainWindow.setTitle(strFileName);
+      });      
   });
  
 }
