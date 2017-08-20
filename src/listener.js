@@ -2,17 +2,17 @@ const electron = require('electron')
 
 const ipc = electron.ipcRenderer
 
-ipc.on('save', _ => {
+/*ipc.on('save', _ => {
   var strText=document.getElementById('contenteditor').value 
   console.log(strText)
   ipc.send('gettext', strText)
-})
+})*/
 
 
 ipc.on('update', _ => {
   var strText=document.getElementById('contenteditor').value 
   console.log(strText)
-  ipc.send('gettext', strText)
+  ipc.send('updateText', strText)
 })
 
 
@@ -24,10 +24,10 @@ ipc.on('settitle', (evt, strTitle) => {
   this.title = strTitle
 })
 
-document.getElementById('contenteditor').addEventListener('keypress', _ => {
+/*document.getElementById('contenteditor').addEventListener('keypress', _ => {
     var strText=document.getElementById('contenteditor').value 
     ipc.send('setDirty', strText)
-})
+})*/
 
 /*document.getElementById('contenteditor').addEventListener('change', _ => {
     var strText=document.getElementById('contenteditor').value 

@@ -46,3 +46,6 @@ jspm_packages
 # Yarn Integrity file
 .yarn-integrity
 
+
+editor-linux-x64
+editor-win32-x64

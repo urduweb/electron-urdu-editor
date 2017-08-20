@@ -130,41 +130,11 @@ app.on('window-all-closed', () => {
 
 ipc.on('updateText', (evt, str) => {
   strContent = str
-  console.log(str)
+  console.log(strContent)
 })
 
 
-ipc.on('gettext', (evt, str) => {
 
-  if(!(currentFilePath == 'NewFile') )
-  {
-    fs.writeFile(currentFilePath, strContent, 'utf8', (err) => {
-          if(err){
-              console.log("An error ocurred creating the file "+ err.message)
-          }
-                      
-          console.log("The file has been succesfully saved");
-      });
-  }
-  else
-  {
-    let filename
-    dialog.showSaveDialog((fileName) => {
-        if (fileName === undefined){
-            console.log("You didn't save the file");
-            return;
-        }
-
-        // fileName is a string that contains the path and filename created in the save file dialog.  
-        fs.writeFile(fileName, strContent, (err) => {
-            if(err){
-                console.log("An error ocurred creating the file "+ err.message)
-            }                        
-            console.log("The file has been succesfully saved");
-        });
-    });
-  }
-})
 
 
 
@@ -182,10 +152,10 @@ ipc.on('handleCommand', (evt, cmd) => {
   }
 })
 
-ipc.on('setDirty', (evt, str) => {
+/*ipc.on('setDirty', (evt, str) => {
   dirtyFlag = true
   strContent=str
-})
+})*/
 
 newDocument  = function()
 {
@@ -207,12 +177,17 @@ saveCurrentChangesAs = function()
       }
 
       // fileName is a string that contains the path and filename created in the save file dialog.  
-      fs.writeFile(fileName, strContent, (err) => {
-          if(err){
-              console.log("An error ocurred creating the file "+ err.message)
-          }     
-          dirtyFlag = false                   
-          console.log("The file has been succesfully saved");
+      fs.truncate(fileName, 0, function() {
+        fs.writeFile(fileName, strContent, (err) => {
+            if(err){
+                console.log("An error ocurred creating the file "+ err.message)
+            }     
+            let strFileName= path.basename(fileName)
+            currentFilePath= fileName
+            mainWindow.setTitle(strFileName);
+            dirtyFlag = false                 
+            console.log("The file has been succesfully saved");
+        });
       });
   });
 }
@@ -227,8 +202,10 @@ saveCurrentChanges = function()
     //let index= dialog.showMessageBox({type:'question', buttons:['Yes', 'No'], title:'Unsaved changes..', message:'Do want to save changes?'})
     //if (index==0) {
       mainWindow.webContents.send('update')
+      console.log("Saving fle "+currentFilePath)
       if(!(currentFilePath == 'NewFile') )
         {
+          fs.truncate(currentFilePath, 0, function() {
             fs.writeFile(currentFilePath, strContent, 'utf8', (err) => {
                 if(err){
                     console.log("An error ocurred creating the file "+ err.message)
@@ -236,6 +213,7 @@ saveCurrentChanges = function()
                 dirtyFlag = false          
                 console.log("The file has been succesfully saved");
             });
+          });
         }
         else
         {
@@ -246,7 +224,16 @@ saveCurrentChanges = function()
                     return;
                 }
 
+                /*fs.truncate("persistence\\announce.txt", 0, function() {
+                  fs.writeFile("persistence\\announce.txt", string, function (err) {
+                      if (err) {
+                          return console.log("Error writing file: " + err);
+                      }
+                  });
+                });*/
+
                 // fileName is a string that contains the path and filename created in the save file dialog.  
+                
                 fs.writeFile(fileName, strContent, (err) => {
                     if(err){
                         console.log("An error ocurred creating the file "+ err.message)
@@ -254,11 +241,14 @@ saveCurrentChanges = function()
                     else
                     {
                       let strFileName= path.basename(fileName)
+                      currentFilePath= fileName
                       mainWindow.setTitle(strFileName);
                       dirtyFlag = false
                       console.log("The file has been succesfully saved");
                     }                                                  
                 });
+                
+
             });
         }
     //}

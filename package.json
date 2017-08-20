@@ -4,6 +4,7 @@
   "description": "Urdu Editor",
   "main": "src/main.js",
   "scripts": {
+    "build" : "rimraf urdueditor-* && electron-packager . --platform=darwin,win32,linux --arch=x64 --icon=icon",
     "start": "electron ."
   },
   "keywords": [
