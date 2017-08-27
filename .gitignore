@@ -47,5 +47,4 @@ jspm_packages
 .yarn-integrity
 
 
-editor-linux-x64
-editor-win32-x64
+urdueditor*
